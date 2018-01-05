@@ -1,0 +1,22 @@
+services:
+  postfix:
+    environment:
+      HTTP_PROXY: ${HTTP_PROXY}
+      HTTPS_PROXY: ${HTTPS_PROXY}
+    build:
+      args:
+        HTTP_PROXY: '${HTTP_PROXY}'
+        HTTPS_PROXY: '${HTTPS_PROXY}'
+      context: image
+      dockerfile: Dockerfile
+    image: mail-relay
+    container_name: 'mail-relay'
+    hostname: 'mail-relay'
+    networks:
+      - mailrelay
+    expose:
+      - '25'
+networks:
+  mailrelay:
+    driver: bridge
+version: '2'
