@@ -1,13 +1,14 @@
 services:
   postfix:
+    env_file: settings.env
     environment:
       HTTP_PROXY: ${HTTP_PROXY}
-      HTTPS_PROXY: ${HTTPS_PROXY}
+      HTTPS_PROXY: ${HTTPS_PROXY}'
     build:
       args:
         HTTP_PROXY: '${HTTP_PROXY}'
         HTTPS_PROXY: '${HTTPS_PROXY}'
-      context: image
+      context: ./
       dockerfile: Dockerfile
     image: mail-relay
     container_name: 'mail-relay'
