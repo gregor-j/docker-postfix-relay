@@ -17,6 +17,8 @@ services:
       - postfix-spool:/var/spool/postfix
     networks:
       mailrelay:
+    ports:
+      - "127.0.0.1:10305:587"
 networks:
   mailrelay:
     driver: bridge
