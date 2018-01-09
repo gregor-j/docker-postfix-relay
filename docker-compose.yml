@@ -14,9 +14,7 @@ services:
     container_name: 'mail-relay'
     hostname: 'mail-relay'
     networks:
-      - mailrelay
-    expose:
-      - '25'
+      mailrelay:
 networks:
   mailrelay:
     driver: bridge
