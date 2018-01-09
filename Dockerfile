@@ -35,9 +35,11 @@ RUN chmod 755 /usr/local/bin/postfix.sh \
     # encrypt traffic when relaying mail
     && postconf -e smtp_tls_security_level="encrypt" \
     # ensure ownership
-    && chown -R 
+    && chown -R root:root /var/spool/postfix
 
 EXPOSE 587
+
+VOLUME [ "/var/spool/postfix" ]
 
 ENTRYPOINT [ "postfix.sh" ]
 CMD ["supervisord" ,"-c", "/etc/supervisord.conf"]

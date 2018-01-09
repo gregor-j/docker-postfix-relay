@@ -13,9 +13,13 @@ services:
     image: mail-relay
     container_name: 'mail-relay'
     hostname: 'mail-relay'
+    volumes:
+      - postfix-spool:/var/spool/postfix
     networks:
       mailrelay:
 networks:
   mailrelay:
     driver: bridge
+volumes:
+  postfix-spool:
 version: '2'
