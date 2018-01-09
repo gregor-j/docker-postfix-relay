@@ -33,9 +33,7 @@ RUN chmod 755 /usr/local/bin/postfix.sh \
     # open ports on all interfaces
     && postconf -e inet_interfaces="all" \
     # encrypt traffic when relaying mail
-    && postconf -e smtp_tls_security_level="encrypt" \
-    # ensure ownership
-    && chown -R root:root /var/spool/postfix
+    && postconf -e smtp_tls_security_level="encrypt" 
 
 EXPOSE 587
 
