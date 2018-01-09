@@ -18,7 +18,7 @@ services:
     networks:
       mailrelay:
     ports:
-      - "127.0.0.1:10305:587"
+      - "127.0.0.1:2525:25"
 networks:
   mailrelay:
     driver: bridge
