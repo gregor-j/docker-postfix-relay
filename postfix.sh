@@ -10,17 +10,21 @@ else
 fi
 unset TIMEZONE
 
-# Configure relay host:port and user:pass.
-if [ -n "${RELAY_HOST}" ] && [ -n "${RELAY_USER}" ] && [ -n "${RELAY_PASS}" ]; then
-    echo "Configure relay to ${RELAY_HOST} with user ${RELAY_USER} ..."
-    echo "${RELAY_HOST}    ${RELAY_USER}:${RELAY_PASS}" > /etc/postfix/relay_password_map
-    postmap /etc/postfix/relay_password_map
-    rm /etc/postfix/relay_password_map
+# Configure relay for email address to host:port and user:pass.
+if [ -n "${RELAY_HOST}" ] && [ -n "${RELAY_PORT}" ] && [ -n "${RELAY_MAIL}" ] && [ -n "${RELAY_USER}" ] && [ -n "${RELAY_PASS}" ]; then
+    echo "Configure relay for ${RELAY_MAIL} to ${RELAY_HOST} authenticating with user ${RELAY_USER} ..."
+    echo "${RELAY_MAIL}    [${RELAY_HOST}]:${RELAY_PORT}" > /etc/postfix/sender_relay
+    echo "${RELAY_MAIL}    ${RELAY_USER}:${RELAY_PASS}" > /etc/postfix/sasl_passwd
+    postmap /etc/postfix/sender_relay
+    postmap /etc/postfix/sasl_passwd
+    rm /etc/postfix/sender_relay /etc/postfix/sasl_passwd
 else
-    echo "Relay configuration incomplete: RELAY_HOST, RELAY_USER and RELAY_PASS are mandatory!"
+    echo "Relay configuration incomplete: RELAY_HOST, RELAY_PORT, RELAY_MAIL, RELAY_USER and RELAY_PASS are mandatory!"
     exit 1
 fi
 unset RELAY_HOST
+unset RELAY_PORT
+unset RELAY_MAIL
 unset RELAY_USER
 unset RELAY_PASS
 

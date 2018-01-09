@@ -1,26 +1,43 @@
 FROM alpine:3.7
 
-COPY postfix.sh /usr/local/bin/
+COPY postfix.sh /usr/local/bin/postfix.sh
+COPY supervisord.conf /etc/supervisord.conf
+COPY rsyslog.conf /etc/rsyslog.conf
 
 RUN chmod 755 /usr/local/bin/postfix.sh \
     && apk add --no-cache --update \
         postfix \
+        supervisor \
+        rsyslog \
         ca-certificates \
         tzdata \
-    #&& update-ca-certificates \
     && rm -rf /var/cache/apk/* \
-    && postconf -e smtpd_relay_restrictions="permit_mynetworks permit_sasl_authenticated defer_unauth_destination" \
-    && postconf -e mynetworks="localhost 127.0.0.1" \
-    && postconf -e inet_interfaces="all" \
+    # disable smtp (port 25)
+    && postconf -M# smtp/inet \
+    # enable submission (port 587)
+    && postconf -M submission/inet="submission inet n       -       n       -       -       smtpd" \
+    && postconf -P submission/inet/syslog_name=postfix/submission \
+    && postconf -P submission/inet/smtpd_relay_restrictions=permit_mynetworks,reject \
+    # disable local delivery
     && postconf -e local_transport="error:local mail delivery is disabled" \
     && postconf -e local_recipient_maps=  \
-    && postconf -e smtpd_recipient_restrictions="permit_mynetworks, reject_unauth_destination" \
+    # enable sender dependend relay
+    && touch /etc/postfix/sender_relay \
+    && touch /etc/postfix/sasl_passwd \
+    && postconf -e sender_dependent_relayhost_maps="hash:/etc/postfix/sender_relay" \
+    && postconf -e smtp_sasl_password_maps="hash:/etc/postfix/sasl_passwd" \
     && postconf -e smtp_sasl_auth_enable="yes" \
+    && postconf -e relayhost= \
+    # restrict access by default to localhost
+    && postconf -e mynetworks="localhost 127.0.0.1" \
+    # open ports on all interfaces
+    && postconf -e inet_interfaces="all" \
+    # encrypt traffic when relaying mail
     && postconf -e smtp_tls_security_level="encrypt" \
-    && touch /etc/postfix/relay_password_map \
-    && postconf -e smtp_sasl_password_maps="hash:/etc/postfix/relay_password_map" \
-    && postconf -e smtp_sasl_security_options="noanonymous"
+    # ensure ownership
+    && chown -R 
 
-EXPOSE 25
+EXPOSE 587
 
 ENTRYPOINT [ "postfix.sh" ]
+CMD ["supervisord" ,"-c", "/etc/supervisord.conf"]
