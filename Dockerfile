@@ -1,10 +1,9 @@
-FROM alpine:3.7
+FROM alpine:3.8
 
-COPY postfix.sh /usr/local/bin/postfix.sh
-COPY supervisord.conf /etc/supervisord.conf
-COPY rsyslog.conf /etc/rsyslog.conf
+COPY bin/* /usr/local/bin/
+COPY etc/* /etc/
 
-RUN chmod 755 /usr/local/bin/postfix.sh \
+RUN chmod 755 /usr/local/bin/* \
     && apk add --no-cache --update \
         postfix \
         supervisor \
@@ -35,11 +34,15 @@ RUN chmod 755 /usr/local/bin/postfix.sh \
     && postconf -e smtp_tls_security_level="encrypt" \
     # restrictions
     && postconf -e smtpd_recipient_restrictions="permit_mynetworks,reject_unauth_destination" \
-    && postconf -e smtpd_relay_restrictions="permit_mynetworks permit_sasl_authenticated defer_unauth_destination" 
+    && postconf -e smtpd_relay_restrictions="permit_mynetworks permit_sasl_authenticated defer_unauth_destination" \
+    # prepare for individual configuration
+    && mv "/etc/postfix/main.cf" "/etc/postfix/main.cf.template" \
+    && mv "/etc/postfix/master.cf" "/etc/postfix/master.cf.template"
 
 EXPOSE 25
 
 VOLUME [ "/var/spool/postfix" ]
 
-ENTRYPOINT [ "postfix.sh" ]
+ENTRYPOINT [ "entrypoint.sh" ]
+
 CMD ["supervisord" ,"-c", "/etc/supervisord.conf"]
