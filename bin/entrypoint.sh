@@ -18,25 +18,10 @@ else
 fi
 
 # Use configuration templates in case no configuration files have been mounted.
-if [[ ! -e "/etc/postfix/main.cf" ]]; then
-    cp "/etc/postfix/main.cf.template" "/etc/postfix/main.cf"
-fi
+/bin/cp -a /etc/postfix.template/* /etc/postfix/
 
-# Use configuration templates in case no configuration files have been mounted.
-if [[ ! -e "/etc/postfix/master.cf" ]]; then
-    cp "/etc/postfix/master.cf.template" "/etc/postfix/master.cf"
-fi
-
-# Create empty sender dependent relayhost map in case no mapping has been mounted.
-if [[ ! -e "/etc/postfix/sender_relay" ]]; then
-    touch "/etc/postfix/sender_relay"
-fi
+# Create postfix lookup tables for relay mappings.
 postmap "/etc/postfix/sender_relay"
-
-# Create empty smtp sasl password maps in case no mapping has been mounted.
-if [[ ! -e "/etc/postfix/sasl_passwd" ]]; then
-    touch "/etc/postfix/sasl_passwd"
-fi
 postmap "/etc/postfix/sasl_passwd"
 
 # Restrict hosts that are allowed to send mail.

@@ -36,12 +36,13 @@ RUN chmod 755 /usr/local/bin/* \
     && postconf -e smtpd_recipient_restrictions="permit_mynetworks,reject_unauth_destination" \
     && postconf -e smtpd_relay_restrictions="permit_mynetworks permit_sasl_authenticated defer_unauth_destination" \
     # prepare for individual configuration
-    && mv "/etc/postfix/main.cf" "/etc/postfix/main.cf.template" \
-    && mv "/etc/postfix/master.cf" "/etc/postfix/master.cf.template"
+    && /bin/mkdir -p /etc/postfix.template \
+    && /bin/cp -av /etc/postfix/* /etc/postfix.template/ \
+    && /bin/rm -Rv /etc/postfix/*
 
 EXPOSE 25
 
-VOLUME [ "/var/spool/postfix" ]
+VOLUME ["/etc/postfix/","/var/spool/postfix"]
 
 ENTRYPOINT [ "entrypoint.sh" ]
 
