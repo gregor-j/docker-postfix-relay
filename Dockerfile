@@ -6,6 +6,11 @@ COPY etc/* /etc/
 RUN chmod 755 /usr/local/bin/* \
     && apk add --no-cache --update \
         postfix \
+        cyrus-sasl \
+        cyrus-sasl-crammd5 \
+        cyrus-sasl-digestmd5 \
+        cyrus-sasl-login \
+        cyrus-sasl-plain \
         supervisor \
         rsyslog \
         ca-certificates \
@@ -24,6 +29,7 @@ RUN chmod 755 /usr/local/bin/* \
     && postconf -e smtp_sasl_security_options="noanonymous" \
     && postconf -e smtp_sender_dependent_authentication="yes" \
     && postconf -e smtp_sasl_auth_enable="yes" \
+    && postconf -e smtp_sasl_mechanism_filter="plain login cram-md5 digest-md5" \
     && postconf -e smtp_sasl_type="cyrus" \
     && postconf -e relayhost= \
     # restrict access by default to localhost
@@ -31,7 +37,11 @@ RUN chmod 755 /usr/local/bin/* \
     # open ports on all interfaces
     && postconf -e inet_interfaces="all" \
     # encrypt traffic when relaying mail
+    && postconf -e smtp_use_tls="yes" \
+    && postconf -e smtp_tls_session_cache_database="btree:/var/spool/postfix/smtp_scache" \
+    && postconf -e smtp_tls_loglevel="2" \
     && postconf -e smtp_tls_security_level="encrypt" \
+    && postconf -e smtp_tls_wrappermode="yes" \
     # restrictions
     && postconf -e smtpd_recipient_restrictions="permit_mynetworks,reject_unauth_destination" \
     && postconf -e smtpd_relay_restrictions="permit_mynetworks permit_sasl_authenticated defer_unauth_destination" \
