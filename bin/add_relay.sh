@@ -47,6 +47,7 @@ if [[ ${#} -ne 5 ]]; then
     (>&2 echo "Invalid parameter count!")
     echo
     ar_usage
+    exit 1
 fi
 
 set -e
