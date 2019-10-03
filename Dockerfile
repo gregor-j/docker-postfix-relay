@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM alpine:latest
 
 COPY bin/* /usr/local/bin/
 COPY etc/* /etc/
