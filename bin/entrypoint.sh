@@ -8,7 +8,7 @@
 # ########################################################################## #
 
 # Set the timezone.
-if [[ -n "${TIMEZONE}" && -e "/usr/share/zoneinfo/${TIMEZONE}" ]]; then
+if [ -n "${TIMEZONE}" ] && [ -e "/usr/share/zoneinfo/${TIMEZONE}" ]; then
     echo "Setting timezone ${TIMEZONE} ..."
     cp "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime
     echo "${TIMEZONE}" >  /etc/timezone
@@ -25,7 +25,7 @@ postmap "/etc/postfix/sender_relay"
 postmap "/etc/postfix/sasl_passwd"
 
 # Restrict hosts that are allowed to send mail.
-if [[ -n "${ALLOWED_HOSTS}" ]]; then
+if [ -n "${ALLOWED_HOSTS}" ]; then
     echo "Restricting access to this mail relay to ${ALLOWED_HOSTS}."
     postconf -e mynetworks="${ALLOWED_HOSTS}" || exit $?
 else

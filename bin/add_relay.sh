@@ -31,7 +31,7 @@ function ar_usage()
 }
 
 # Display help?
-while [[ "${1}" ]]; do
+while [ "${1}" ]; do
     case "${1}" in
         -h | --help )
             ar_help
@@ -43,7 +43,7 @@ while [[ "${1}" ]]; do
     esac
 done
 
-if [[ ${#} -ne 5 ]]; then
+if [ ${#} -ne 5 ]; then
     (>&2 echo "Invalid parameter count!")
     echo
     ar_usage
