@@ -9,10 +9,9 @@
 
 # Set the timezone.
 if [ -n "${TIMEZONE}" ] && [ -e "/usr/share/zoneinfo/${TIMEZONE}" ]; then
-    echo "Setting timezone ${TIMEZONE} ..."
+    echo "Using timezone ${TIMEZONE}."
     cp "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime
     echo "${TIMEZONE}" >  /etc/timezone
-    echo "Using timezone ${TIMEZONE}."
 else
     echo "Using timezone UTC (default)."
 fi
