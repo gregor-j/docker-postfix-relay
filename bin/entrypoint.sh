@@ -33,5 +33,9 @@ fi
 # Set the hostname.
 postconf -e myhostname="${HOSTNAME}"
 
+# update CA-certificates
+# In case custom certificate authorities have been added to /usr/local/share/ca-certificates as volume, them.
+update-ca-certificates
+
 # run CMD
 exec "$@"
