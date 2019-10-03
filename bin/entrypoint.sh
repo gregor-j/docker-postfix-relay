@@ -28,9 +28,6 @@ postmap "/etc/postfix/sasl_passwd"
 if [ -n "${ALLOWED_HOSTS}" ]; then
     echo "Restricting access to this mail relay to ${ALLOWED_HOSTS}."
     postconf -e mynetworks="${ALLOWED_HOSTS}" || exit $?
-else
-    echo "Host restriction due to open relay configuration incomplete: ALLOWED_HOSTS is mandatory!"
-    exit 1
 fi
 
 # Set the hostname.
