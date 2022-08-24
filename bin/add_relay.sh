@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # ########################################################################## #
 # Add sender dependent relay script.                                         #
@@ -7,17 +7,14 @@
 # @license MIT                                                               #
 # ########################################################################## #
 
-AR_RELAYS="/etc/postfix/sender_relay"
-AR_PASSWD="/etc/postfix/sasl_passwd"
-
-function ar_help()
+show_help()
 {
     echo "Adds a sender dependent relay."
     echo
-    ar_usage
+    show_usage
 }
 
-function ar_usage()
+show_usage()
 {
     echo "Usage: add_relay.sh <sender> <host> <port> <user> <password>"
     echo
@@ -34,7 +31,7 @@ function ar_usage()
 while [ "${1}" ]; do
     case "${1}" in
         -h | --help )
-            ar_help
+            show_help
             exit 1
             ;;
         * )
@@ -46,12 +43,12 @@ done
 if [ ${#} -ne 5 ]; then
     (>&2 echo "Invalid parameter count!")
     echo
-    ar_usage
+    show_usage
     exit 1
 fi
 
 set -e
-echo "${1}    [${2}]:${3}" | tee -a "${AR_RELAYS}"
-echo "${1}    ${4}:${5}" | tee -a "${AR_PASSWD}"
-postmap "${AR_RELAYS}"
-postmap "${AR_PASSWD}"
+echo "${1}    [${2}]:${3}" | tee -a "/etc/postfix/${RELAY_HOSTS_FILE}"
+echo "${1}    ${4}:${5}" | tee -a "/etc/postfix/${RELAY_PASSWD_FILE}"
+postmap "lmdb:/etc/postfix/${RELAY_HOSTS_FILE}"
+postmap "lmdb:/etc/postfix/${RELAY_PASSWD_FILE}"
